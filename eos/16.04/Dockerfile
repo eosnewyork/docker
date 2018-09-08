@@ -1,6 +1,10 @@
 FROM ubuntu:16.04
 ARG symbol=EOS
 
+# install dependencies
+RUN apt-get update \
+    && apt-get install -y git
+
 RUN git clone https://github.com/EOSIO/eos.git --recursive \
     && cd eos \
     && git checkout v$version \
