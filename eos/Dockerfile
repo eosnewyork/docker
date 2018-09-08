@@ -4,9 +4,10 @@ FROM ${builder_tag}
 
 ARG symbol=EOS
 ARG version
+ARG github_url=https://github.com/EOSIO/eos.git
 
 # build eosio
-RUN git clone https://github.com/EOSIO/eos.git --recursive \
+RUN git clone $github_url --recursive \
     && cd eos \
     && git checkout ${version} \
     && git submodule update --init --recursive \
@@ -17,6 +18,6 @@ RUN git clone https://github.com/EOSIO/eos.git --recursive \
     && cpack
 
 ENV EOSIO_ROOT=/opt/eosio
-ENV LD_LIBRARY_PATH /usr/local/lib
+ENV LD_LIBRARY_PATH /usr/local/eosio/lib
 VOLUME /opt/eosio/bin/data-dir
-ENV PATH /opt/eosio/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH /usr/local/eosio/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
