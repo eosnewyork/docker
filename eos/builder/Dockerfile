@@ -1,10 +1,6 @@
-FROM ubuntu:16.04
-ARG symbol=EOS
-ARG version
-
-# install dependencies
-RUN apt-get update \
-    && apt-get install -y git cmake  
+ARG ubuntu_version
+ARG boost_version 1_67_0
+FROM ubuntu:${ubuntu_version}
 
 # build dependencies
 RUN echo 'APT::Install-Recommends 0;' >> /etc/apt/apt.conf.d/01norecommends \
@@ -31,7 +27,7 @@ ENV CC clang
 ENV CXX clang++
 
 RUN wget https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.bz2 -O - | tar -xj \
-    && cd boost_1_67_0 \
+    && cd boost_${boost_version} \
     && ./bootstrap.sh --prefix=/usr/local \
     && echo 'using clang : 4.0 : clang++-4.0 ;' >> project-config.jam \
     && ./b2 -d0 -j$(nproc) --with-thread --with-date_time --with-system --with-filesystem --with-program_options \
@@ -81,18 +77,3 @@ RUN git clone --depth 1 --single-branch --branch master https://github.com/ucb-b
     && mv ../../source/include /opt/berkeley-softfloat-3/include && cd - && rm -rf berkeley-softfloat-3
 
 ENV SOFTFLOAT_ROOT /opt/berkeley-softfloat-3
-
-# build eosio
-RUN git clone https://github.com/EOSIO/eos.git --recursive \
-    && cd eos \
-    && git checkout $version \
-    && git submodule update --init --recursive \
-    && cmake -H. -B"/opt/eosio" -DCMAKE_BUILD_TYPE=Release -DWASM_ROOT=/opt/wasm -DCMAKE_CXX_COMPILER=clang++ \
-       -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/opt/eosio  -DSecp256k1_ROOT_DIR=/usr/local -DBUILD_MONGO_DB_PLUGIN=true -DCORE_SYMBOL_NAME=$symbol \
-    && cd build \
-    && cpack
-
-ENV EOSIO_ROOT=/opt/eosio
-ENV LD_LIBRARY_PATH /usr/local/lib
-VOLUME /opt/eosio/bin/data-dir
-ENV PATH /opt/eosio/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
