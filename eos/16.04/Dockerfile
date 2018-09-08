@@ -4,7 +4,7 @@ ARG version
 
 # install dependencies
 RUN apt-get update \
-    && apt-get install -y git
+    && apt-get install -y git cmake 
 
 RUN git clone https://github.com/EOSIO/eos.git --recursive \
     && cd eos \
