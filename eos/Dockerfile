@@ -1,7 +1,7 @@
 ARG symbol=EOS
 ARG version
-ARG ubuntu_version
-FROM ubuntu:${ubuntu_version}
+ARG builder_tag
+FROM ${builder_tag}
 
 # build eosio
 RUN git clone https://github.com/EOSIO/eos.git --recursive \
