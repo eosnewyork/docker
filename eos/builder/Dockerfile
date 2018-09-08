@@ -1,5 +1,5 @@
 ARG ubuntu_version
-ARG boost_version 1_67_0
+ARG boost_version "1_67_0"
 FROM ubuntu:${ubuntu_version}
 
 # build dependencies
