@@ -1,7 +1,9 @@
-ARG symbol=EOS
-ARG version
+
 ARG builder_tag
 FROM ${builder_tag}
+
+ARG symbol=EOS
+ARG version
 
 # build eosio
 RUN git clone https://github.com/EOSIO/eos.git --recursive \
