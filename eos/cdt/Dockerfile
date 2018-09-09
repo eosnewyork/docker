@@ -6,7 +6,7 @@ ARG version
 
 # build eosio
 RUN git clone https://github.com/eosio/eosio.cdt \
-    && git submodule update --init --recursive \
     && cd eosio.cdt \
+    && git submodule update --init --recursive \
     && ./build.sh ${symbol}
 
