@@ -20,7 +20,7 @@ RUN ls -lsa \
     && cd ./eos \
     && cmake --build /opt/eosio --target install \
     && cd /opt/eosio \
-    && sed -i -e "s/${version}/${version}.as${as_version}" CPackConfig.cmake CPackSourceConfig.cmake \
+    && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' CPackConfig.cmake CPackSourceConfig.cmake \
     && cpack
 
 ENV EOSIO_ROOT=/opt/eosio
