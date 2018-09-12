@@ -4,6 +4,7 @@ FROM ${builder_tag}
 
 ARG symbol=EOS
 ARG version
+ARG as_version=1
 ARG github_url=https://github.com/deckb/eos.git
 
 # build eosio
@@ -16,6 +17,7 @@ RUN git clone $github_url --recursive \
         -DCORE_SYMBOL_NAME=$symbol -DBUILD_ACCOUNT_SNAPSHOT_PLUGIN=true  \
     && cmake --build /opt/eosio --target install \
     && cd /opt/eosio \
+    && sed -i -e "s/${version}/${version}.as${as_version}" CPackConfig.cmake CPackSourceConfig.cmake \
     && cpack
 
 ENV EOSIO_ROOT=/opt/eosio
