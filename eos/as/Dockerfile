@@ -14,7 +14,10 @@ RUN git clone $github_url --recursive \
     && git submodule update --init --recursive \
     && cmake -H. -B"/opt/eosio" -DCMAKE_BUILD_TYPE=Release -DWASM_ROOT=/opt/wasm -DCMAKE_CXX_COMPILER=clang++ \
        -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/usr/local/eosio  -DSecp256k1_ROOT_DIR=/usr/local -DBUILD_MONGO_DB_PLUGIN=true \
-        -DCORE_SYMBOL_NAME=$symbol -DBUILD_ACCOUNT_SNAPSHOT_PLUGIN=true  \
+        -DCORE_SYMBOL_NAME=$symbol -DBUILD_ACCOUNT_SNAPSHOT_PLUGIN=true  
+
+RUN ls -lsa \
+    && cd ./eos \
     && cmake --build /opt/eosio --target install \
     && cd /opt/eosio \
     && sed -i -e "s/${version}/${version}.as${as_version}" CPackConfig.cmake CPackSourceConfig.cmake \
