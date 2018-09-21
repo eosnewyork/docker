@@ -12,7 +12,7 @@ RUN git clone $github_url --recursive \
     && cd eos \
     && git checkout v${version} \
     && git submodule update --init --recursive \
-    && eosio_build.sh -s EOS -o Release
+    && ./eosio_build.sh -s EOS -o Release
 
 RUN ls -lsa \
     && cd ./eos \
