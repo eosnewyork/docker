@@ -16,7 +16,8 @@ RUN git clone $github_url --recursive \
 
 RUN ls -lsa \
     && cd ./eos \
-    && cmake --build /opt/eosio --target install \
+    && cmake --build ./build --target install \
+    && ls -lsa \
     && cd /opt/eosio \
     && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' CPackConfig.cmake CPackSourceConfig.cmake \
     && cpack
