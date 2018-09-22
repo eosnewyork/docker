@@ -18,7 +18,7 @@ RUN ls -lsa \
     && cd ./eos \
     && cmake --build ./build --target install \
     && ls -lsa \
-    && cd /opt/eosio \
+    && cd build \
     && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' ./build/CPackConfig.cmake ./build/CPackSourceConfig.cmake \
     && cpack
 
