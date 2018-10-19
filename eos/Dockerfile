@@ -16,8 +16,8 @@ RUN git clone $github_url --recursive \
    
 RUN  cmake --build /opt/eosio --target install \
      && cd /opt/eosio \
-     && ls . \
-     && cpack
+     && cd packages \
+     && bash generate_package.sh deb
 
 
 ENV EOSIO_ROOT=/opt/eosio
