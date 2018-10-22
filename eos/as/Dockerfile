@@ -20,7 +20,8 @@ RUN ls -lsa \
     && ls -lsa \
     && cd build \
     && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' CPackConfig.cmake CPackSourceConfig.cmake \
-    && cpack
+    && cd packages \
+    && bash generate_package.sh deb
 
 ENV EOSIO_ROOT=/opt/eosio
 ENV LD_LIBRARY_PATH /usr/local/eosio/lib
