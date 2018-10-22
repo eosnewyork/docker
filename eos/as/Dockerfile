@@ -17,8 +17,8 @@ RUN git clone $github_url --recursive \
 RUN ls -lsa \
     && cd ./eos \
     && cmake --build ./build --target install \
-    && ls -lsa \
     && cd build \
+    && ls -lsa \
     && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' CPackConfig.cmake CPackSourceConfig.cmake \
     && cd packages \
     && bash generate_package.sh deb
