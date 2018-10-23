@@ -17,10 +17,9 @@ RUN git clone $github_url --recursive \
 RUN ls -lsa \
     && cd ./eos \
     && cmake --build ./build --target install \
-    && cd build \
+    && cd build/packages \
     && ls -lsa \
-    && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' CPackConfig.cmake CPackSourceConfig.cmake \
-    && cd packages \
+    && sed -i -e 's/'${version}'/'${version}'.as'${as_version}'/g' generate_package.sh \
     && bash generate_package.sh deb
 
 ENV EOSIO_ROOT=/opt/eosio
