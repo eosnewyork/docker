@@ -1,6 +1,6 @@
 
 ARG builder_tag
-FROM ${builder_tag}
+FROM eosnewyork/${builder_tag}
 
 ARG symbol=EOS
 ARG version

@@ -1,5 +1,5 @@
 ARG eos_tag
-FROM ${eos_tag}
+FROM eosnewyork/${eos_tag}
 
 ARG symbol=EOS
 ARG version
