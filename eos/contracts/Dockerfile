@@ -1,3 +1,4 @@
+ARG cdt_version
 FROM eosnewyork/${cdt_version}
 
 # build eosio
