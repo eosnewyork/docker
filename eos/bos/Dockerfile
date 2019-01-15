@@ -2,7 +2,7 @@
 ARG builder_tag
 FROM eosnewyork/${builder_tag}
 
-ARG symbol=EOS
+ARG symbol=BOS
 ARG version
 ARG github_url=https://github.com/boscore/bos.git
 
