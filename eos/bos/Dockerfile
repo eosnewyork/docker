@@ -13,9 +13,9 @@ RUN git clone $github_url --recursive \
     && git submodule update --init --recursive \
     && ./eosio_build.sh -s $symbol 
    
-RUN  ls \
+RUN  cd bos \
      && ./eosio_instal.sh \
-     && cd ./bos/build/packages \
+     && cd ./build/packages \
      && ls . \
      && bash generate_package.sh deb
 
