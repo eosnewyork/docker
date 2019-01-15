@@ -13,8 +13,9 @@ RUN git clone $github_url --recursive \
     && git submodule update --init --recursive \
     && ./eosio_build.sh -s $symbol 
    
-RUN  cmake --build /opt/eosio --target install \
-     && cd /opt/eosio/packages \
+RUN  ls \
+     && ./eosio_instal.sh \
+     && cd ./bos/build/packages \
      && ls . \
      && bash generate_package.sh deb
 
