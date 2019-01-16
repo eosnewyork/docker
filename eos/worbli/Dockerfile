@@ -3,13 +3,14 @@ ARG builder_tag
 FROM eosnewyork/${builder_tag}
 
 ARG symbol=EOS
+ARG git_tag
 ARG version
 ARG github_url=https://github.com/worbli/worbli.git
 
 # build eosio
 RUN git clone $github_url --recursive \
     && cd worbli \
-    && git checkout worbli-${version} \
+    && git checkout worbli-${git_tag} \
     && git submodule update --init --recursive \
     && ./eosio_build.sh -s $symbol -o Release
    
