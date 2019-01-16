@@ -3,7 +3,6 @@ ARG builder_tag
 FROM eosnewyork/${builder_tag}
 
 ARG symbol=EOS
-ARG git_tag
 ARG version
 ARG github_url=https://github.com/worbli/worbli.git
 
@@ -18,7 +17,6 @@ RUN  cd worbli \
      && cmake --build ./build --target install \
      && cd build/packages \
      && ls . \
-     && sed -i -e 's/'${version}'/worbli-'${version}'/g' generate_package.sh \
      && bash generate_package.sh deb
 
 
