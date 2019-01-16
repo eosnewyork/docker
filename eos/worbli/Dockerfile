@@ -3,7 +3,7 @@ ARG builder_tag
 FROM eosnewyork/${builder_tag}
 
 ARG symbol=EOS
-ARG version
+ARG git_tag
 ARG github_url=https://github.com/worbli/worbli.git
 
 # build eosio
