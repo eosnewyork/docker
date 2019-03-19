@@ -6,11 +6,18 @@ ARG symbol=EOS
 ARG version
 ARG github_url=https://github.com/EOSIO/eos.git
 
+# get common submodules
+# get zmq
+RUN git clone https://github.com/eosrio/eos_zmq_plugin \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt install -y pkg-config libzmq5-dev
+
 # build eosio
-RUN git clone $github_url --recursive \
+RUN git clone ${github_url} --recursive \
     && cd eos \
     && git checkout ${version} \
     && git submodule update --init --recursive \
+    && export LOCAL_CMAKE_FLAGS="-DEOSIO_ADDITIONAL_PLUGINS=/eos_zmq_plugin" \
     && ./eosio_build.sh -s $symbol -o Release
    
 RUN  cd eos \
