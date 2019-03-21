@@ -16,3 +16,5 @@ RUN git clone https://github.com/EOSChronicleProject/eos-chronicle \
     && cd build \
     && cmake .. \
     && make
+
+RUN ln -s /eos-chronicle/build/chronicle-receiver /usr/bin/

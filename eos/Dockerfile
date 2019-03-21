@@ -1,15 +1,13 @@
 
-#ARG builder_tag
-#FROM eosnewyork/${builder_tag}
-ARG ubuntu_version
-FROM ubuntu:$ubuntu_version
+ARG builder_tag
+FROM eosnewyork/eosbuilder:${builder_tag}
 
 ARG symbol=EOS
 ARG version
 ARG github_url=https://github.com/EOSIO/eos.git
 
 RUN apt update \
-    && apt install -y git pkg-config libzmq5-dev curl sudo
+    && apt install -y git pkg-config libzmq5-dev curl sudo cmake
 
 # get common submodules
 # get zmq

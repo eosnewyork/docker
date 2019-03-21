@@ -1,7 +1,7 @@
 ARG ubuntu_version
 
 FROM ubuntu:$ubuntu_version
-
+ARG eos_version=1.7.0
 ARG JOBS=4
 
 ENV HOME=/root
@@ -15,7 +15,7 @@ ENV CMAKE_VERSION_MAJOR=3
 ENV CMAKE_VERSION_MINOR=13
 ENV CMAKE_VERSION_PATCH=2
 ENV CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
-ENV MONGODB_VERSION=4.0.6
+ENV MONGODB_VERSION=4.1.1
 ENV MONGODB_ROOT=${OPT_LOCATION}/mongodb-${MONGODB_VERSION}
 ENV MONGODB_CONF=${ETC_LOCATION}/mongod.conf
 ENV MONGODB_LOG_LOCATION=${VAR_LOCATION}/log/mongodb
@@ -38,80 +38,78 @@ ENV DOXYGEN_VERSION=1_8_14
 ENV DOXYGEN_ROOT=${SRC_LOCATION}/doxygen-${DOXYGEN_VERSION}
 ENV TINI_VERSION=0.18.0
 
-RUN mkdir /root/opt \
-    && mkdir /root/etc \
-    && mkdir /root/src
+RUN mkdir -p $SRC_LOCATION \
+    && mkdir -p $OPT_LOCATION \ 
+    && mkdir -p $VAR_LOCATION \
+    && mkdir -p $BIN_LOCATION \
+    && mkdir -p $VAR_LOCATION/log \
+    && mkdir -p $ETC_LOCATION \
+    && mkdir -p $MONGODB_LOG_LOCATION \
+    && mkdir -p $MONGODB_DATA_LOCATION
 
-# build dependenciesOB
-RUN cat /etc/issue \
-  && echo 'APT::Install-Recommends 0;' >> /etc/apt/apt.conf.d/01norecommends \
-  && echo 'APT::Install-Suggests 0;' >> /etc/apt/apt.conf.d/01norecommends \
-  && apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo wget curl net-tools ca-certificates unzip gnupg doxygen
+# intall dependencies
+RUN apt update \
+    && DEBIAN_FRONTEND=noninteractive apt install -y \
+    git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev doxygen graphviz libgmp3-dev autotools-dev \
+    build-essential libicu-dev python2.7 python2.7-dev python3 python3-dev autoconf libtool curl zlib1g-dev sudo ruby \
+    libusb-1.0-0-dev libcurl4-gnutls-dev pkg-config cmake lldb-4.0
 
-RUN echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" >> /etc/apt/sources.list.d/llvm.list \
-  && wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add - \
-  && apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -y git llvm-4.0 clang-4.0 libclang-4.0-dev make automake libbz2-dev libssl-dev doxygen graphviz \
-     libgmp3-dev autotools-dev build-essential libicu-dev python2.7 python2.7-dev python3 python3-dev \
-     autoconf libtool curl zlib1g-dev sudo ruby libusb-1.0-0-dev libcurl4-gnutls-dev pkg-config \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-4.0/bin/clang 400 \
-  && update-alternatives --install /usr/bin/clang++ clang++ /usr/lib/llvm-4.0/bin/clang++ 400
-
-RUN wget https://cmake.org/files/v3.9/cmake-3.9.6-Linux-x86_64.sh \
-    && bash cmake-3.9.6-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir --skip-license \
-    && rm cmake-3.9.6-Linux-x86_64.sh
-
-ENV CC clang
-ENV CXX clang++
+#RUN curl -LO https://cmake.org/files/v$CMAKE_VERSION_MAJOR.$CMAKE_VERSION_MINOR/cmake-$CMAKE_VERSION.tar.gz \
+#    && tar -xzf cmake-$CMAKE_VERSION.tar.gz \
+#    && cd cmake-$CMAKE_VERSION \
+#    && ./bootstrap --prefix=$HOME \
+#    && make -j"${JOBS}" \
+#    && make install \
+#    && cd .. \
+#    && rm -f cmake-$CMAKE_VERSION.tar.gz
 
 RUN cd ${SRC_LOCATION} \
     && curl -LO https://dl.bintray.com/boostorg/release/${BOOST_VERSION_MAJOR}.${BOOST_VERSION_MINOR}.${BOOST_VERSION_PATCH}/source/boost_$BOOST_VERSION.tar.bz2 \
     && tar -xjf boost_$BOOST_VERSION.tar.bz2 \
-    && echo "src ${BOOST_ROOT}" \
     && cd $BOOST_ROOT \
     && ./bootstrap.sh --prefix=$BOOST_ROOT \
     && ./b2 -q -j"${JOBS}" install \
     && cd .. \
     && rm -f boost_$BOOST_VERSION.tar.bz2 \
     && rm -rf $BOOST_LINK_LOCATION \
-    && ln -s $BOOST_ROOT $BOOST_LINK_LOCATION \
-    || exit 1
+    && ln -s $BOOST_ROOT $BOOST_LINK_LOCATION
 
-#RUN git clone --depth 1 --single-branch --branch release_40 https://github.com/llvm-mirror/llvm.git \
-#    && git clone --depth 1 --single-branch --branch release_40 https://github.com/llvm-mirror/clang.git llvm/tools/clang \
-#    && cd llvm \
-#    && cmake -H. -Bbuild -GNinja -DCMAKE_INSTALL_PREFIX=/opt/wasm -DLLVM_TARGETS_TO_BUILD= -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly -DCMAKE_BUILD_TYPE=Release  \
-#    && cmake --build build --target install \
-#    && cd .. && rm -rf llvm
+# 18.04 is not supported for mongodb 3.6
+# so manually set 16 for now <- this will bite me in the @$$ at some point
+RUN export OS_MAJ=18 \
+    && export OS_MIN=04 \
+    && cd $SRC_LOCATION/ \
+    && curl -OL http://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu$OS_MAJ$OS_MIN-$MONGODB_VERSION.tgz \
+    && tar -xzf mongodb-linux-x86_64-ubuntu$OS_MAJ$OS_MIN-$MONGODB_VERSION.tgz \
+    && mv $SRC_LOCATION/mongodb-linux-x86_64-ubuntu$OS_MAJ$OS_MIN-$MONGODB_VERSION $MONGODB_ROOT \
+    && touch $MONGODB_LOG_LOCATION/mongod.log \
+    && rm -f mongodb-linux-x86_64-ubuntu$OS_MAJ$OS_MIN-$MONGODB_VERSION.tgz \
+    && mkdir -p $MONGODB_DATA_LOCATION \
+    && rm -rf $MONGODB_LINK_LOCATION \
+    && rm -rf $BIN_LOCATION/mongod \
+    && ln -s $MONGODB_ROOT $MONGODB_LINK_LOCATION \
+    && ln -s $MONGODB_LINK_LOCATION/bin/mongod $BIN_LOCATION/mongod
+
+RUN cd ${SRC_LOCATION} \
+    && curl -LO https://github.com/mongodb/mongo-c-driver/releases/download/$MONGO_C_DRIVER_VERSION/mongo-c-driver-$MONGO_C_DRIVER_VERSION.tar.gz \
+    && tar -xzf mongo-c-driver-$MONGO_C_DRIVER_VERSION.tar.gz \
+    && cd mongo-c-driver-$MONGO_C_DRIVER_VERSION \
+    && mkdir -p cmake-build \
+    && cd cmake-build \
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME -DENABLE_BSON=ON -DENABLE_SSL=OPENSSL -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_STATIC=ON .. \
+    && make -j"${JOBS}" \
+    && make install \
+    && cd ../.. \
+    && rm mongo-c-driver-$MONGO_C_DRIVER_VERSION.tar.gz
+
+RUN cd ${SRC_LOCATION} \
+    && curl -L https://github.com/mongodb/mongo-cxx-driver/archive/r$MONGO_CXX_DRIVER_VERSION.tar.gz -o mongo-cxx-driver-r$MONGO_CXX_DRIVER_VERSION.tar.gz \
+    && tar -xzf mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz \
+    && cd mongo-cxx-driver-r$MONGO_CXX_DRIVER_VERSION/build \
+    && cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME .. \
+    && make -j"${JOBS}" VERBOSE=1 \
+    && make install \
+    && cd ../.. \
+    && rm -f mongo-cxx-driver-r$MONGO_CXX_DRIVER_VERSION.tar.gz
+
 RUN ln -s /usr/lib/llvm-4.0 $LLVM_ROOT
-
-#RUN wget https://github.com/WebAssembly/binaryen/archive/1.37.21.tar.gz -O - | tar -xz \
-#    && cd binaryen-1.37.21 \
-#    && cmake -H. -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release \
-#    && cmake --build build --target install \
-#    && cd .. && rm -rf binaryen-1.37.21
-
-#RUN git clone --depth 1 https://github.com/cryptonomex/secp256k1-zkp \
-#    && cd secp256k1-zkp \
-#    && ./autogen.sh \
-#    && ./configure --prefix=/usr/local \
-#    && make -j$(nproc) install \
-#    && cd .. && rm -rf secp256k1-zkp
-
-#RUN git clone --depth 1 -b releases/v3.3 https://github.com/mongodb/mongo-cxx-driver \
-#    && cd mongo-cxx-driver/build \
-#    && cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. \
-#    && make -j$(nproc) \
-#    && make install \
-#    && cd ../../ && rm -rf mongo-cxx-driver
-
-#RUN git clone --depth 1 --single-branch --branch master https://github.com/ucb-bar/berkeley-softfloat-3.git \
-#    && cd berkeley-softfloat-3/build/Linux-x86_64-GCC \
-#    && make -j${nproc} SPECIALIZE_TYPE="8086-SSE" SOFTFLOAT_OPS="-DSOFTFLOAT_ROUND_EVEN -DINLINE_LEVEL=5 -DSOFTFLOAT_FAST_DIV32TO16 -DSOFTFLOAT_FAST_DIV64TO32" \
-#    && mkdir -p /opt/berkeley-softfloat-3 && cp softfloat.a /opt/berkeley-softfloat-3/libsoftfloat.a \
-#    && mv ../../source/include /opt/berkeley-softfloat-3/include && cd - && rm -rf berkeley-softfloat-3
-
-ENV SOFTFLOAT_ROOT /opt/berkeley-softfloat-3
