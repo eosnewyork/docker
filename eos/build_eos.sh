@@ -8,12 +8,12 @@ fi
 
 cwd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-builder_tag=${2}
+ubuntu_version=${2}
 version=${1}
 docker_prefix=eosnewyork
 
 docker build \
-       --build-arg builder_tag=${builder_tag} \
+       --build-arg builder_tag=${ubuntu_version} \
        --build-arg version=v${version} \
        --tag ${docker_prefix}/eos:${version}_${ubuntu_version} \
        ${cwd}

@@ -112,4 +112,6 @@ RUN cd ${SRC_LOCATION} \
     && cd ../.. \
     && rm -f mongo-cxx-driver-r$MONGO_CXX_DRIVER_VERSION.tar.gz
 
-RUN ln -s /usr/lib/llvm-4.0 $LLVM_ROOT
+RUN ln -s /usr/lib/llvm-4.0 $LLVM_ROOT \
+    && ln -s /root/lib/* /lib/ \
+    && ln -s /root/include /include
