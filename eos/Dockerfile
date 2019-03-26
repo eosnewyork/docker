@@ -18,8 +18,7 @@ RUN git clone https://github.com/eosrio/eos_zmq_plugin
 # account_snapshot_plugin
 RUN git clone https://github.com/deckb/account_snapshot_plugin
 
-ENV LOCAL_CMAKE_FLAGS="-DEOSIO_ADDITIONAL_PLUGINS=/eos_zmq_plugin -DEOSIO_ADDITIONAL_PLUGINS=/account_snapshot_plugin"
-ENV CMAKE_PREFIX_PATH=/root/lib:${CMAKE_PREFIX_PATH}
+ENV LOCAL_CMAKE_FLAGS="-DEOSIO_ADDITIONAL_PLUGINS=/eos_zmq_plugin;/account_snapshot_plugin"
 
 # build eosio
 RUN git clone ${github_url} --recursive \
