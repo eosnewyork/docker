@@ -1,6 +1,6 @@
 
 ARG builder_tag
-FROM eosnewyork/${builder_tag}
+FROM eosnewyork/eosbuilder:${builder_tag}
 
 ARG symbol=BOS
 ARG version

@@ -28,5 +28,5 @@ fi
 docker run \
        -v ${cwd}:/mnt/build \
        -it ${docker_prefix}/eos:${version}_${ubuntu_version} \
-       /bin/bash -c "ls /eos/build/packages && cp /eos/build/packages/eosio_${version}-1_amd64.deb /mnt/build/"
+       /bin/bash -c "ls /eos/build/packages && cp /eos/build/packages/eosio_${version}*_amd64.deb /mnt/build/"
        #"ls /eos/build/package && cp /eos/build/package/eosio_${version}-1_amd64.deb /mnt/build/"
