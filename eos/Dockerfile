@@ -16,9 +16,10 @@ RUN apt update \
 #RUN git clone https://github.com/eosrio/eos_zmq_plugin
 
 # account_snapshot_plugin
-# RUN git clone https://github.com/deckb/account_snapshot_plugin
+RUN git clone https://github.com/deckb/account_snapshot_plugin
 
 #ENV LOCAL_CMAKE_FLAGS="-DEOSIO_ADDITIONAL_PLUGINS=/eos_zmq_plugin;/account_snapshot_plugin"
+ENV LOCAL_CMAKE_FLAGS="-DEOSIO_ADDITIONAL_PLUGINS=/account_snapshot_plugin"
 
 # build eosio
 RUN git clone ${github_url} --recursive \
@@ -26,12 +27,12 @@ RUN git clone ${github_url} --recursive \
     && git checkout ${version} \
     && git submodule update --init --recursive \
     && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y
-   
+
 RUN  cd eos \
-     && cd build/packages \
-     && ls . \
-     && bash generate_package.sh deb \
-     && dpkg -i *deb
+    && cd build/packages \
+    && ls . \
+    && bash generate_package.sh deb \
+    && dpkg -i *deb
 
 
 ENV EOSIO_ROOT=/opt/eosio
