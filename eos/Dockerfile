@@ -1,6 +1,7 @@
-
-ARG builder_tag
-FROM eosnewyork/eosbuilder:${builder_tag}
+ARG ubuntu_version
+#ARG builder_tag
+#FROM eosnewyork/eosbuilder:${builder_tag}
+FROM ubuntu:$ubuntu_version
 
 ARG symbol=EOS
 ARG version
@@ -29,6 +30,7 @@ RUN git clone ${github_url} --recursive \
     && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y
 
 RUN  cd eos \
+    && ./scripts/eosio_install.sh \
     && cd build/packages \
     && ls . \
     && bash generate_package.sh deb \

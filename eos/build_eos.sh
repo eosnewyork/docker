@@ -13,7 +13,7 @@ version=${1}
 docker_prefix=eosnewyork
 
 docker build \
-       --build-arg builder_tag=${ubuntu_version} \
+       --build-arg ubuntu_version=${ubuntu_version} \
        --build-arg version=v${version} \
        --tag ${docker_prefix}/eos:${version}_${ubuntu_version} \
        ${cwd}
