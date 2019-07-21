@@ -27,11 +27,13 @@ RUN git clone ${github_url} --recursive \
     && cd eos \
     && git checkout ${version} \
     && git submodule update --init --recursive \
-    && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y
+    && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y -P -f
 
 RUN  cd eos \
-    && ./scripts/eosio_install.sh \
-    && cd build/packages \
+    && export VERBOSE=1 \ 
+    && cd build/ \
+    && make install \
+    && cd packages \
     && ls . \
     && bash generate_package.sh deb \
     && dpkg -i *deb

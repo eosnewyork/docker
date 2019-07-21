@@ -11,7 +11,7 @@ RUN git clone $github_url --recursive \
     && cd worbli \
     && time git checkout worbli-${git_tag} \
     && git submodule update --init --recursive \
-    && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y
+    && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y -f -P
    
 RUN  cd worbli \
      && cmake --build ./build --target install \
