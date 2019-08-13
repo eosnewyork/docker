@@ -1,6 +1,7 @@
-
 ARG builder_tag
+#ARG ubuntu_version
 FROM eosnewyork/eosbuilder:${builder_tag}
+#FROM ubuntu:${ubuntu_version}
 
 ARG symbol=BOS
 ARG version
