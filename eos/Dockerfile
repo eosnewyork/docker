@@ -10,7 +10,7 @@ ARG github_url=https://github.com/EOSIO/eos.git
 ENV HOME=/root
 
 RUN apt update \
-    && apt install -y git pkg-config libzmq5-dev curl sudo cmake
+    && apt install -y git pkg-config libzmq5-dev curl sudo cmake jq
 
 # get common submodules
 # get zmq
