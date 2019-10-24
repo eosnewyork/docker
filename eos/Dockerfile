@@ -27,7 +27,7 @@ RUN git clone ${github_url} --recursive \
     && cd eos \
     && git checkout ${version} \
     && git submodule update --init --recursive \
-    && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y -P -f
+    && ./eosio_build.sh -s $symbol -o Release -y || ./scripts/eosio_build.sh -s $symbol -o Release -y -f -P -m
 
 RUN  cd eos \
     && export VERBOSE=1 \ 
